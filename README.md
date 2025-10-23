@@ -8,17 +8,33 @@
 
 </div>
 
-# <div align="center">Time series forecasting using Deep Learning</div>
+# <div align="center">Data Modeling Sales Data Using Power-Pivot</div>
 <div align="center"><img src="https://github.com/nicole-kutswa/Data-modeling-With-Power-Pivot/blob/main/output/model.gif?raw=true"></div>
 
 
 
-## Overview:
-Deep learning methods offer a lot of promise for time series forecasting, such as the automatic learning of temporal dependence and the automatic handling of temporal structures like trends and seasonality.
+# Overview
+
+**Data modeling** is the process of organizing and structuring data so that it becomes easy to store, relate, and analyze.  
+It defines **what data exists**, **how it connects**, and **how it can be used to generate insights**.
+
+In this project, I applied data modeling concepts using **Excel Power Pivot** to link multiple tables, create relationships, and perform advanced analysis efficiently.
+
+---
+
+# Why Data Modeling Matters
+Data modeling helps to:
+- Eliminate data redundancy and inconsistency  
+- Create logical connections between datasets  
+- Improve the speed and accuracy of analysis  
+- Enable better visualization and reporting through PivotTables or dashboards 
 
 ## Dataset:
-[Predict Future Slaes](https://www.kaggle.com/c/competitive-data-science-predict-future-sales)<br>
-[Store Item Demand Forecasting Challenge](https://www.kaggle.com/c/competitive-data-science-predict-future-sales/data)
+[customer table](data/sales_data.xlsx)<br>
+[orders table](data/sales_data.xlsx)<br>
+[item table](data/sales_data.xlsx)
+
+
 #### Data Fields:
 - **ID** - an Id that represents a (Shop, Item) tuple within the test set
 - **shop_id** - unique identifier of a shop
