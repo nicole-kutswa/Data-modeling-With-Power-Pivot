@@ -1,7 +1,7 @@
 <div align="center">
   
-[![github](https://raw.githubusercontent.com/nicole-kutswa/Data-modeling-With-Power-Pivot/main/icons/git.svg)][1]
-[![linkedin](https://raw.githubusercontent.com/nicole-kutswa/Data-modeling-With-Power-Pivot/main/icons/iconmonstr-linkedin-5.svg)][2]
+[![GitHub](https://img.shields.io/badge/GitHub-%20?style=for-the-badge&logo=github&labelColor=black&color=blue)][1]
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-%20?style=for-the-badge&logo=linkedin&labelColor=0A66C2&color=blue)][2]
 
 [1]: https://github.com/nicole-kutswa
 [2]: https://www.linkedin.com/in/nicole-kutswa/ 
@@ -34,81 +34,106 @@ Data modeling helps to:
 [orders table](orders.csv)<br>
 [products table](products.csv)
 
+## Data Dictionary
 
-#### Data Fields:
-- **ID** - an Id that represents a (Shop, Item) tuple within the test set
-- **shop_id** - unique identifier of a shop
-- **item_id** - unique identifier of a product
-- **item_category_id** - unique identifier of item category
-- **item_cnt_day** - number of products sold. You are predicting a monthly amount of this measure
-- **item_price** - current price of an item
-- **date** - date in format dd/mm/yyyy
-- **date_block_num** - a consecutive month number, used for convenience. January 2013 is 0, February 2013 is 1,..., October 2015 is 33
-- **item_name** - name of item
-- **shop_name** - name of shop
-- **item_category_name** - name of item category
-- **store** - Store ID
-- **sales** - Number of items sold at a particular store on a particular date.
+### Customers Table
+| Field | Description |
+|--------|--------------|
+| **Customer ID** | A unique identifier assigned to each customer. Used to link customer details to their orders. |
+| **Customer Name** | The full name of the customer. |
+| **Email** | Customer’s email address, used for communication or marketing purposes. |
+| **Phone Number** | Customer’s contact phone number. |
+| **Address Line 1** | The primary street address of the customer. |
+| **City** | The city where the customer resides. |
+| **Country** | The country where the customer is located. |
+| **Post Code** | The postal or ZIP code associated with the customer’s address. |
+| **Loyalty Card** | Indicates whether the customer is enrolled in a loyalty or rewards program (Yes/No). |
 
-#### Time period of dataset:
-```
-Min date from train set: 2013-01-01
-Max date from train set: 2017-12-31
-```
+---
+
+### Orders Table
+| Field | Description |
+|--------|--------------|
+| **Order ID** | A unique identifier for each order placed. |
+| **Order Date** | The date the order was placed or processed. |
+| **Customer ID** | Identifier linking the order to the corresponding customer in the Customers table. |
+| **Product ID** | Identifier linking the order to the specific product in the Products table. |
+| **Quantity** | The number of product units ordered. |
+
+---
+
+### Products Table
+| Field | Description |
+|--------|--------------|
+| **Product ID** | A unique identifier for each product offered. |
+| **Coffee Type** | The specific coffee variety or blend (e.g., Arabica, Robusta, Espresso). |
+| **Roast Type** | The roast level of the coffee beans (e.g., Light, Medium, Dark). |
+| **Size** | The packaging or serving size of the product (e.g., 250g, 500g, 1kg). |
+| **Unit Price** | The selling price per product unit. |
+| **Price per 100g** | The standardized price of the coffee per 100 grams for comparison purposes. |
+| **Profit** | The net profit earned per product unit sold (Unit Price minus cost). |
 
 ## Implementation:
 
-**Libraries:**  `NumPy` `pandas` `tensorflow` `matplotlib` `sklearn` `seaborn`
-## Data Exploration:
-<img src="https://github.com/nicole-kutswa/Time-series-forecasting/blob/main/output/overall%20daily%20sales.PNG?raw=true">
-<img src="https://github.com/nicole-kutswa/Time-series-forecasting/blob/main/output/item%20daily%20sales.PNG?raw=true">
-<img src ="https://github.com/nicole-kutswa/Time-series-forecasting/blob/main/output/store%20sales.PNG?raw=true">
+### Data Preparation and Modeling Process
 
-## Model training, evaluation, and prediction:
-### Multilayer Perceptron:
-- Multilayer Perceptron model or MLP model, here our model will have input features equal to the window size.
-- MLP models don't take the input as sequenced data, so for the model, it is just receiving inputs and don't treat them as sequenced data, that may be a problem since the model won't see the data with the sequence pattern that it has.
+The dataset was first **loaded into Power Query in Excel** for cleaning and validation.  
+In this stage, the following checks were performed:
+- Ensured that all tables were **free from missing or duplicate records**.  
+- Verified that data types (e.g., numbers, dates, and text fields) were **consistent and correctly formatted**.  
+- Checked for any **errors or inconsistencies** in key columns such as *Customer ID*, *Product ID*, and *Order Date*.
 
-### CNN Model:
-- For the CNN model we will use one convolutional hidden layer followed by a max pooling layer. The filter maps are then flattened before being interpreted by a Dense layer and outputting a prediction.
-- The convolutional layer should be able to identify patterns between the timesteps.
+After confirming the data quality, the cleaned tables were **loaded into the Excel Data Model (Power Pivot)**, where **relationships** were created between them:
+- The **Customer ID** field linked the *Customers* table to the *Orders* table.  
+- The **Product ID** field linked the *Products* table to the *Orders* table.  
 
-### LSTM:
-- Now the LSTM model actually sees the input data as a sequence, so it's able to learn patterns from sequenced data (assuming it exists) better than the other ones, especially patterns from long sequences.
+These relationships enabled efficient data aggregation and analysis across multiple tables.
 
-### CNN-LSTM:
-- CNN-LSTM is a hybrid model for univariate time series forecasting.
+---
 
-- The benefit of this model is that the model can support very long input sequences that can be read as blocks or subsequences by the CNN model, then pieced together by the LSTM model.
+### Calculated Columns and Measures
 
-### Comapring Models:
-<img src ="https://github.com/nicole-kutswa/Time-series-forecasting/blob/main/output/compare%20models.PNG?raw=true">
-<br>
+#### Returning Customer Check  
+A **calculated column** was added to the *Customers* table to identify whether each customer was a returning customer.  
+This was achieved using the following DAX formula:
+```DAX
+Returning Customer = IF(
+    CALCULATE(
+        COUNTROWS(Orders),
+        FILTER(Orders, Orders[Customer ID] = Customers[Customer ID])
+    ) > 1,
+    "Yes",
+    "No"
+)
+Profit per Item = RELATED(Products[Profit]) * Orders[Quantity]
+```
+### Data Analysis and Visualization
 
-| Model             | Train RMSE             | Validation RMSE                                                                |
-| ----------------- | -----------------| ------------------------------------------------------------------ |
-| MLP | 18.36|  18.50 |
-| CNN | 18.62|  18.76 |
-| LSTM | 19.98|  18.76 |
-| CNN-LSTM| 19.20 |  19.17 |
-### Lessons Learned
-`Time Series Forecasting`
-`Deep Learning for Time Series Forecasting`
-`LSTM`
+After creating the calculated columns, a **PivotTable** was used to analyze and summarize the data.  
+A **heatmap visualization** was applied to easily identify which **coffee type generated the highest profit**   
+<img src ="https://github.com/nicole-kutswa/Data-modeling-With-Power-Pivot/blob/main/output/profit per coffee type.PNG?raw=true">
 
-## References:
-[Deep Learning for Time Series Forecasting](https://machinelearningmastery.com/how-to-get-started-with-deep-learning-for-time-series-forecasting-7-day-mini-course/)
-### Feedback
+Next, a **Customer Summary PivotTable** was created to highlight:
 
-If you have any feedback, please reach out at nicolekutswa@gmail.com
+- The **customers who generated the highest overall profit based on profit per unit**, and
+<img src ="https://github.com/nicole-kutswa/Data-modeling-With-Power-Pivot/blob/main/output/returning customers.PNG?raw=true">
+
+- The **most frequent (returning) customers based on the count of order ID**
+<img src ="https://github.com/nicole-kutswa/Data-modeling-With-Power-Pivot/blob/main/output/returning customers2.PNG?raw=true">
+
+Finally, a **line chart** was developed to visualize how different **coffee types performed over the years**, showing trends in sales and profitability.  
+A **slicer based on Roast Type** was also added to allow interactive filtering, making it easier to compare performance across different roast categories.<br>
+<img src ="https://github.com/nicole-kutswa/Data-modeling-With-Power-Pivot/blob/main/output/visualisation.PNG?raw=true"><br>
 
 
 ### About Me
 #### Hi, I'm Nicole
 I am a Data Engineer Enthusiast and  Data science & ML practitioner
 
-[![github](https://raw.githubusercontent.com/nicole-kutswa/Telecom-customer-churn-analysis/main/icons/git.svg)][1]
-[![linkedin](https://raw.githubusercontent.com/nicole-kutswa/Telecom-customer-churn-analysis/main/icons/iconmonstr-linkedin-5.svg)][2]
+[![GitHub](https://img.shields.io/badge/GitHub-%20?style=for-the-badge&logo=github&labelColor=black&color=blue)][1]
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-%20?style=for-the-badge&logo=linkedin&labelColor=0A66C2&color=blue)][2]
 
 [1]: https://github.com/nicole-kutswa
-[2]: https://www.linkedin.com/in/nicole-kutswa/ 
+[2]: https://www.linkedin.com/in/nicole-kutswa/
+
+
