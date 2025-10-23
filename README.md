@@ -30,9 +30,9 @@ Data modeling helps to:
 - Enable better visualization and reporting through PivotTables or dashboards 
 
 ## Dataset:
-[customer table](data/sales_data.xlsx)<br>
-[orders table](data/sales_data.xlsx)<br>
-[item table](data/sales_data.xlsx)
+[customer table](customers.csv)<br>
+[orders table](orders.csv)<br>
+[products table](products.csv)
 
 
 #### Data Fields:
